@@ -1,19 +1,75 @@
 = amqp-hermes
 
-Description goes here.
+A wrapper around ruby-amqp to make pub/sub live more easy.
+
+== Synopsis
+
+=== Sending a message
+
+  # plain and simple
+  tr = AMQP::Hermes::Transmitter.new("test.queue.testing")
+  tr.transmit "payload"
+
+  # or as json
+  tr.transmit { :foo => "bar", :quex => "stuff" }.to_json
+
+  # with AMQP options
+  tr.transmit "payload", :persistent => true
+
+  # on a different queue
+  tr.transmit "payload", :routing_key => "test.queue.real"
+  
+
+=== Receiving a message with the simple build in handler
+
+  re = AMQP::Hermes::Receiver.new("test.queue")  # will listen on routing_key
+                                                 # test.queue.* be default
+  while !re.messages.any?
+    sleep 0.1
+  end
+
+  puts re.messages.first.payload
+
+=== Receiving with a custom handler
+
+  class MyCustomHandler
+    def receive(message)
+      if message.headers.routing_key =~ /test/
+        $stderr.puts "Just a test, nothing to worry about"
+        $stderr.puts message.payload
+
+      else
+        # ... do something incredible
+
+      end
+    end
+  end
+
+  re = AMQP::Hermes::Receiver.new("test.queue",
+    :handler => MyCustomHandler.new
+  )
+
+  while(true); 
+    # the receiver is at the ball now
+  end
 
 == Contributing to amqp-hermes
  
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
-* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
+* Check out the latest master to make sure the feature hasn't been implemented
+  or the bug hasn't been fixed yet.
+* Check out the issue tracker to make sure someone already hasn't requested it
+  and/or contributed it.
 * Fork the project.
 * Start a feature/bugfix branch.
 * Commit and push until you are happy with your contribution.
-* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+* Make sure to add tests for it. This is important so I don't break it in a
+  future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want
+  to have your own version, or is otherwise necessary, that is fine, but
+  please isolate to its own commit so I can cherry-pick around it.
 
 == Copyright
 
-Copyright (c) 2012 Hartog C. de Mik. See LICENSE.txt for
+Copyright (c) 2012 Wyngle, http://wyngle.com/. See LICENSE.txt for
 further details.
 
