@@ -15,10 +15,10 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "amqp-hermes"
-  gem.homepage = "http://github.com/coffeeaddict/amqp-hermes"
+  gem.homepage = "http://github.com/wyngle/amqp-hermes"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Hermes; Messenger of the gods}
+  gem.description = %Q{Wrapper around ruby-amqp to make pub/sub easier}
   gem.email = "hartog.de.mik@gmail.com"
   gem.authors = ["Hartog C. de Mik"]
   # dependencies defined in Gemfile
