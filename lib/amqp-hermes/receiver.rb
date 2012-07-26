@@ -6,13 +6,13 @@ module Hermes
     attr_reader :messages, :queue, :exchange, :routing_key
     attr_accessor :_listening
 
-    def initialize(queue, topic="pub/sub", options={})
+    def initialize(queue, topic=nil, options={})
       raise "You *MUST* specify a queue" if queue.nil? or queue.empty?
       @queue = queue
 
       if topic.is_a? Hash
         options = topic.dup
-        topic = options.delete(:topic) || "pub/sub"
+        topic = options.delete(:topic)
       end
 
       @routing_key = options.delete(:routing_key)
@@ -25,6 +25,8 @@ module Hermes
       @handler = options.delete(:handler) || self
 
       options[:auto_delete] ||= true
+
+      topic ||= "pub/sub"
       @exchange = channel.topic(topic, options)
 
       @messages = []
@@ -40,8 +42,9 @@ module Hermes
 
         receiver.channel.queue(receiver.queue).bind(
           receiver.exchange, :routing_key => receiver.routing_key
-        ).subscribe do |headers, payload|
+        ).subscribe(:ack => true) do |headers, payload|
           handler.receive(AMQP::Hermes::Message.new(headers, payload))
+          headers.ack
         end
       end
     end
