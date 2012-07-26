@@ -4,11 +4,19 @@ module Hermes
     include AMQP::Hermes::Connectivity
 
     attr_reader :queue
-    def initialize(queue=nil, topic="pub/sub", options={})
+    def initialize(queue=nil, topic=nil, options={})
       @queue = queue
 
+      if topic.is_a?(Hash)
+        options = topic.clone
+        topic   = options[:topic]
+      end
+
       options[:auto_delete] ||= true
+
+      topic ||= "pub/sub"
       @exchange = channel.topic(topic, options)
+
       @transmitting = false
     end
 
