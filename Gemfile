@@ -11,5 +11,5 @@ group :development do
   gem "faker"
   gem "rdoc"
   gem "bundler"
-  gem "juwelier"
+#  gem "juwelier"
 end
